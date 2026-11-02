@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>TikTok connection · Curiosidades Diárias</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../">
+      <svg width="34" height="34" viewBox="0 0 800 800" aria-hidden="true"><rect width="800" height="800" rx="200" fill="#FFD400"/><g transform="translate(0 -10)"><path d="M 285 300 A 115 115 0 1 1 445 405 Q 400 425 400 480 L 400 515" fill="none" stroke="#0E1634" stroke-width="86" stroke-linecap="round" stroke-linejoin="round"/><circle cx="400" cy="625" r="50" fill="#0E1634"/></g></svg>
+      Curiosidades Diárias
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="../#how-it-works">How it works</a>
+      <a href="../terms/">Terms of Service</a>
+      <a href="../privacy/">Privacy Policy</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="status" id="ok" hidden>
+    <span class="badge ok">Connected</span>
+    <h1 style="font-size: 32px; margin: 0 0 10px">TikTok account authorized</h1>
+    <p>TikTok sent back the authorization. To finish connecting, copy the address of this page and paste it into the setup tool that is waiting for it.</p>
+    <p lang="pt-BR">Conta autorizada. Copie o endereço desta página e cole no terminal onde o <code>tiktok_auth.py</code> está aguardando.</p>
+    <div class="copy-row">
+      <input id="url" type="text" readonly aria-label="Page address">
+      <button type="button" id="copy">Copy address</button>
+    </div>
+    <p id="copied" role="status" aria-live="polite"></p>
+    <p style="color: var(--muted); font-size: 15px">The code in this address works only once and expires in a few minutes. Nothing is sent from this page to any server.</p>
+  </div>
+
+  <div class="status" id="err" hidden>
+    <span class="badge err">Not connected</span>
+    <h1 style="font-size: 32px; margin: 0 0 10px">Authorization was not completed</h1>
+    <p id="err-text">TikTok did not authorize the connection.</p>
+    <p>You can close this page and start the connection again.</p>
+  </div>
+
+  <div class="status" id="idle">
+    <span class="badge idle">Waiting</span>
+    <h1 style="font-size: 32px; margin: 0 0 10px">TikTok connection</h1>
+    <p>This page receives TikTok's answer after the creator authorizes Curiosidades Diárias on TikTok's official authorization page. There is nothing to do here right now.</p>
+    <p><a href="../">Back to the home page</a></p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="links">
+      <a href="../">Home</a>
+      <a href="../terms/">Terms of Service</a>
+      <a href="../privacy/">Privacy Policy</a>
+      <a href="mailto:vitorsruf@gmail.com">Contact</a>
+    </div>
+    <p>Curiosidades Diárias is an independent project and is not affiliated with, endorsed by or sponsored by TikTok.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var show = function (id) {
+    ["ok", "err", "idle"].forEach(function (x) { document.getElementById(x).hidden = x !== id; });
+  };
+  if (params.get("code")) {
+    show("ok");
+    var input = document.getElementById("url");
+    input.value = window.location.href;
+    document.getElementById("copy").addEventListener("click", function () {
+      var done = function () { document.getElementById("copied").textContent = "Copied. Paste it in the setup tool."; };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(input.value).then(done, function () { input.select(); });
+      } else {
+        input.select();
+        try { document.execCommand("copy"); done(); } catch (e) {}
+      }
+    });
+  } else if (params.get("error")) {
+    show("err");
+    var desc = params.get("error_description") || params.get("error");
+    document.getElementById("err-text").textContent = "TikTok answered: " + desc;
+  }
+})();
+</script>
+</body>
+</html>
